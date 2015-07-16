@@ -24,17 +24,15 @@ export default {
    * in `setup`.
    */
   init: function() {
-    return init();
-  },
-
-  // Protractor hooks
-  setup: function() {
     // Clean up the "fail file" before starting, in case it exists.
     // TODO: Would love to clean up on exit, but yet to find a hook/way to ensure that the file
     // isn't deleted before the last runner exits.
     unsetFailed();
+
+    return init();
   },
 
+  // Protractor hooks
   postTest: function(self, passed) {
     if(!passed) {
       setFailed();
