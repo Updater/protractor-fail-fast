@@ -16,7 +16,7 @@
   },
   "homepage": "https://github.com/Updater/protractor-fail-fast",
   "dependencies": {
-    "jasmine-fail-fast": "git+ssh://git@github.com:Updater/jasmine-fail-fast.git#697563c42b8f1786c085cc5d6fa2e33c1c6d1f81"
+    "jasmine-fail-fast": "~2.0.0"
   },
   "devDependencies": {
     "babel": "5.6.23",
