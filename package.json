@@ -1,0 +1,26 @@
+{
+  "name": "protractor-fail-fast",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/protractor-fail-fast.js",
+  "scripts": {
+    "compile": "mkdirp dist && babel -o dist/protractor-fail-fast.js src/index.js",
+    "prepublish": "npm run compile"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Updater/protractor-fail-fast.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Updater/protractor-fail-fast/issues"
+  },
+  "homepage": "https://github.com/Updater/protractor-fail-fast",
+  "dependencies": {
+    "jasmine-fail-fast": "git+ssh://git@github.com:Updater/jasmine-fail-fast.git#697563c42b8f1786c085cc5d6fa2e33c1c6d1f81"
+  },
+  "devDependencies": {
+    "babel": "5.6.23",
+    "mkdirp": "0.5.1"
+  },
+  "license": "MIT"
+}
