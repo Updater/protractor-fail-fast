@@ -27,9 +27,13 @@ export default {
     // Clean up the "fail file" before starting, in case it exists.
     // TODO: Would love to clean up on exit, but yet to find a hook/way to ensure that the file
     // isn't deleted before the last runner exits.
-    unsetFailed();
+    this.clean();
 
     return init();
+  },
+
+  clean: function() {
+    unsetFailed();
   },
 
   // Protractor hooks
