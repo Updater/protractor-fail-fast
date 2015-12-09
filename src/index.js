@@ -37,12 +37,12 @@ export default {
   },
 
   // Protractor hooks
-  postTest: function(self, passed) {
-    if(!passed) {
+  postTest: function(passed) {
+    if (!passed) {
       setFailed();
     }
 
-    if(hasFailed()) {
+    if (hasFailed()) {
       disableSpecs();
     }
   }
@@ -57,7 +57,7 @@ function setFailed() {
 }
 
 function unsetFailed() {
-  if(hasFailed()) {
+  if (hasFailed()) {
     fs.unlinkSync(TOUCH_ON_FAIL);
   }
 }
