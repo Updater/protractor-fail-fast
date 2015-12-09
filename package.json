@@ -15,6 +15,9 @@
     "url": "https://github.com/Updater/protractor-fail-fast/issues"
   },
   "homepage": "https://github.com/Updater/protractor-fail-fast",
+  "peerDependencies": {
+    "protractor": "< 2.2.0"
+  },
   "dependencies": {
     "jasmine-fail-fast": "~2.0.0"
   },
