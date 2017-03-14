@@ -1,6 +1,6 @@
-import fs from 'fs';
-import {resolve} from 'path';
-import {init, disableSpecs} from 'jasmine-fail-fast';
+import { existsSync, openSync, closeSync, unlinkSync } from 'fs';
+import { resolve } from 'path';
+import { init, disableSpecs } from 'jasmine-fail-fast';
 
 /**
  * protractor-fail-fast
@@ -10,25 +10,12 @@ import {init, disableSpecs} from 'jasmine-fail-fast';
  * detects that this file exists, it will exit using `jasmine-fail-fast`.
  *
  */
-
 const TOUCH_ON_FAIL = resolve(process.cwd(), './.protractor-failed');
 
 export default {
-  // Custom hooks
-
-  /**
-   * Wrapper around `jasmine-fail-fast`'s `init`, which must be called in `onPrepare` as follows:
-   * `jasmine.getEnv().addReporter(failFast.init());`
-   *
-   * Yet to find a way of automating this via a Protractor plugin hook. `jasmine` isn't available
-   * in `setup`.
-   */
+  // Plugin API
   init: function() {
-    // Clean up the "fail file" before starting, in case it exists.
-    // TODO: Would love to clean up on exit, but yet to find a hook/way to ensure that the file
-    // isn't deleted before the last runner exits.
-    this.clean();
-
+    this.clean(); // Clean up the "fail file" before starting, in case it exists.
     return init();
   },
 
@@ -37,6 +24,10 @@ export default {
   },
 
   // Protractor hooks
+  onPrepare: function() {
+    this.init();
+  },
+
   postTest: function(passed) {
     if (!passed) {
       setFailed();
@@ -45,19 +36,23 @@ export default {
     if (hasFailed()) {
       disableSpecs();
     }
+  },
+
+  postResults: function() {
+    this.clean();
   }
 };
 
 function hasFailed() {
-  return fs.existsSync(TOUCH_ON_FAIL);
+  return existsSync(TOUCH_ON_FAIL);
 }
 
 function setFailed() {
-  fs.closeSync(fs.openSync(TOUCH_ON_FAIL, 'w'));
+  closeSync(openSync(TOUCH_ON_FAIL, 'w'));
 }
 
 function unsetFailed() {
   if (hasFailed()) {
-    fs.unlinkSync(TOUCH_ON_FAIL);
+    unlinkSync(TOUCH_ON_FAIL);
   }
 }
