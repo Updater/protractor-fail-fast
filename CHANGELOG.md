@@ -1,4 +1,8 @@
 # Changelog
+## 3.0.2
+
+##### Fixes
+* Catch error when attempting to remove already removed fail file.
 
 ## 3.0.0/3.0.1
 NOTE: `3.0.1` technically contains breaking changes with respect to `3.0.0`.
