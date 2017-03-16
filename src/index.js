@@ -57,5 +57,11 @@ function createFailFile() {
 }
 
 function deleteFailFile() {
-  unlinkSync(FAIL_FILE);
+  try {
+    unlinkSync(FAIL_FILE);
+  } catch (err) {
+    if (err.code !== 'ENOENT') {
+      throw err;
+    }
+  }
 }
