@@ -1,19 +1,30 @@
 # Changelog
 
-## 3.0.0
+## 3.0.0/3.0.1
+NOTE: `3.0.1` technically contains breaking changes with respect to `3.0.0`.
+However, since `3.0.0` was DOA, we're breaking with semver and releasing `3.0.1` as a patch anyway.
+
 ##### Breaking
 * Require `protractor` `>= 4.0.4` as a `peerDependency`.
+* Rename "fail file" from `.protractor-failed` to `.protractor-fail-fast`.
+* Plugin installation changed. Inside the Protractor config file:
 
-##### Features
-* Use new `onPrepare` hook to remove the need for manual configuration. `onPrepare` was added in Protractor [4.0.4](https://github.com/angular/protractor/blob/master/CHANGELOG.md#404). 
+```javascript
+import failFast from 'protractor-fail-fast';
 
-  Simplifies installation to just this line in the Protractor config file:
-  ```javascript
-  plugins: [{
-    package: 'protractor-fail-fast',
-  }]
-  ```
+exports.config = {
+  plugins: [
+    failFast.init(),
+  ],
   
+  // Optional
+  afterLaunch: function() {
+    failFast.clean(); // Removes the fail file once all test runners have completed.
+  },
+}
+```
+
+##### Fixes
 * Upgrade Babel from version 5.x to 6.x.
 
 ## 2.0.0
