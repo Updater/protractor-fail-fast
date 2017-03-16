@@ -15,16 +15,32 @@ yarn add protractor-fail-fast
 npm install protractor-fail-fast
 ```
 
+## Fail file
+Since test runners run in independent processes, we use a "fail file", `.protractor-fail-fast`,
+to communicate between them (better ideas welcome). The "fail file" is created when 
+the plugin is initialized and the test runners then continuously check for the presence 
+of it. If/when a test runner fails, it will delete the "fail file", signaling to the 
+other test runners to stop the test run.
+
+It is recommended that `.protractor-fail-fast` is added to `.gitignore` since this file may be left behind
+if all test runners finish successfully. It can removed in the `afterLaunch` (see below), but could still
+be left behind if Protractor is shut down prior to executing the hook (crash/forced exit).
+
 ## Usage
-Enable `protractor-fail-fast` as a plugin in the Protractor configuration file using the [`package` option](http://www.protractortest.org/#/plugins#using-plugins):
+Inside the Protractor config file:
 
 ```javascript
-plugins: [{
-  package: 'protractor-fail-fast',
-}]
+import failFast from 'protractor-fail-fast';
+
+exports.config = {
+  plugins: [
+    failFast.init(),
+  ],
+  
+  // Optional
+  afterLaunch: function() {
+    failFast.clean(); // Removes the fail file once all test runners have completed.
+  },
+}
 ```
 
-## Fail file
-In order to facilitate communication between the test instances (and for the lack of a better known option), `protractor-fail-fast` writes to an empty file, `.protractor-failed`, whenever a test fails. The presence of this file triggers all other test instances to skip the rest of their tests. 
-
-The `init` and `clean` methods will remove this file, but it may still remain if, for example, the `postResults` Protractor hook isn't executed due to an aborted test run. For that reason, it's recommended to add `.protractor-failed` to `.gitignore`.

@@ -5,54 +5,57 @@ import { init, disableSpecs } from 'jasmine-fail-fast';
 /**
  * protractor-fail-fast
  *
- * For the lack of a better (known) option, using a file to communicate between test runners.
- * If the file exists, it means a test has failed in one (or more) of the runners. If a runner
- * detects that this file exists, it will exit using `jasmine-fail-fast`.
- *
+ * Since test runners run in independent processes, we use a "fail file", `.protractor-fail-fast`,
+ * to communicate between them (better ideas welcome). The "fail file" is created when
+ * the plugin is initialized and the test runners then continuously check for the presence
+ * of it. If/when a test runner fails, it will delete the "fail file", signaling to the
+ * other test runners to stop the test run.
  */
-const TOUCH_ON_FAIL = resolve(process.cwd(), './.protractor-failed');
+const FAIL_FILE = resolve(process.cwd(), './.protractor-fail-fast');
 
 export default {
-  // Plugin API
-  init: function() {
-    this.clean(); // Clean up the "fail file" before starting, in case it exists.
-    return init();
-  },
+  init: () => {
+    // Create the fail file at the beginning of the test run. This cannot take place inside
+    // the plugin hooks since each test runner creates its own instance of the plugin,
+    // causing race conditions. `init` is assumed to be run inside the Protractor config file,
+    // thereby executing only once and prior to the test runners being created.
+    createFailFile();
 
-  clean: function() {
-    unsetFailed();
-  },
+    // Returns the plugin in the "inline" format:
+    // http://www.protractortest.org/#/plugins#using-plugins
+    // Only way to force the user to call `init` to use the plugin.
+    return {
+      inline: {
+        onPrepare: function () {
+          init();
+        },
 
-  // Protractor hooks
-  onPrepare: function() {
-    this.init();
-  },
+        postTest: function (passed) {
+          if (!passed) {
+            deleteFailFile();
+          }
 
-  postTest: function(passed) {
-    if (!passed) {
-      setFailed();
+          if (hasFailed()) {
+            disableSpecs();
+          }
+        },
+      },
     }
-
-    if (hasFailed()) {
-      disableSpecs();
-    }
   },
 
-  postResults: function() {
-    this.clean();
-  }
-};
+  clean: () => {
+    deleteFailFile();
+  },
+}
 
 function hasFailed() {
-  return existsSync(TOUCH_ON_FAIL);
+  return !existsSync(FAIL_FILE);
 }
 
-function setFailed() {
-  closeSync(openSync(TOUCH_ON_FAIL, 'w'));
+function createFailFile() {
+  closeSync(openSync(FAIL_FILE, 'w'));
 }
 
-function unsetFailed() {
-  if (hasFailed()) {
-    unlinkSync(TOUCH_ON_FAIL);
-  }
+function deleteFailFile() {
+  unlinkSync(FAIL_FILE);
 }
