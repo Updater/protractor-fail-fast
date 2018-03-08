@@ -11,10 +11,14 @@ import { init, disableSpecs } from 'jasmine-fail-fast';
  * of it. If/when a test runner fails, it will delete the "fail file", signaling to the
  * other test runners to stop the test run.
  */
-const FAIL_FILE = resolve(process.cwd(), './.protractor-fail-fast');
+let failFile = resolve(process.cwd(), './.protractor-fail-fast');
 
 export default {
-  init: () => {
+  init: (options = {abortAllShards: true}) => {
+    if (options && options.abortAllShards === false) {
+      failFile += '-' + process.pid;
+    }
+
     // Create the fail file at the beginning of the test run. This cannot take place inside
     // the plugin hooks since each test runner creates its own instance of the plugin,
     // causing race conditions. `init` is assumed to be run inside the Protractor config file,
@@ -49,16 +53,16 @@ export default {
 }
 
 function hasFailed() {
-  return !existsSync(FAIL_FILE);
+  return !existsSync(failFile);
 }
 
 function createFailFile() {
-  closeSync(openSync(FAIL_FILE, 'w'));
+  closeSync(openSync(failFile, 'w'));
 }
 
 function deleteFailFile() {
   try {
-    unlinkSync(FAIL_FILE);
+    unlinkSync(failFile);
   } catch (err) {
     if (err.code !== 'ENOENT') {
       throw err;
