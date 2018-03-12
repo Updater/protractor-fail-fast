@@ -5,7 +5,7 @@
   "main": "dist/protractor-fail-fast.js",
   "scripts": {
     "compile": "mkdirp dist && babel src -o dist/protractor-fail-fast.js",
-    "prepublish": "npm run compile"
+    "prepublishOnly": "npm run compile"
   },
   "repository": {
     "type": "git",
