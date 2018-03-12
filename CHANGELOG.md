@@ -1,4 +1,7 @@
 # Changelog
+## 3.1.0
+* Add `abortAllShards` option to [better support sharding tests](https://github.com/Updater/protractor-fail-fast/issues/3).
+
 ## 3.0.2
 
 ##### Fixes
