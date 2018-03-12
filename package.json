@@ -1,6 +1,6 @@
 {
   "name": "protractor-fail-fast",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "description": "",
   "main": "dist/protractor-fail-fast.js",
   "scripts": {
